@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/akrck02/valhalla-core-dal/database"
+	roledal "github.com/akrck02/valhalla-core-dal/services/role"
 	"github.com/akrck02/valhalla-core-sdk/error"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/models"
@@ -31,7 +32,7 @@ func CreateRoleHttp(c *gin.Context) (*models.Response, *models.Error) {
 	}
 
 	var role models.Role
-	var error = CreateRole(conn, client, role)
+	var error = roledal.CreateRole(conn, client, role)
 
 	if error != nil {
 		return nil, error

@@ -1,9 +1,10 @@
 package services
 
 import (
-	"github.com/akrck02/valhalla-api-common/http"
 	"github.com/akrck02/valhalla-core-dal/database"
+	teamdal "github.com/akrck02/valhalla-core-dal/services/team"
 	"github.com/akrck02/valhalla-core-sdk/error"
+	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/models"
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,7 @@ func CreateTeamHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	var team *models.Team = &models.Team{}
 
-	err := c.ShouldatabaseindJSON(team)
+	err := c.ShouldBindJSON(team)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
@@ -30,7 +31,7 @@ func CreateTeamHttp(c *gin.Context) (*models.Response, *models.Error) {
 		}
 	}
 
-	var error = CreateTeam(conn, client, team)
+	var error = teamdal.CreateTeam(conn, client, team)
 	if error != nil {
 		return nil, error
 	}
@@ -54,7 +55,7 @@ func EditTeamHttp(c *gin.Context) (*models.Response, *models.Error) {
 	defer database.Disconnect(*client, conn)
 
 	var params *models.Team = &models.Team{}
-	err := c.ShouldatabaseindJSON(params)
+	err := c.ShouldBindJSON(params)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
@@ -63,7 +64,7 @@ func EditTeamHttp(c *gin.Context) (*models.Response, *models.Error) {
 		}
 	}
 
-	var error = EditTeam(conn, client, params)
+	var error = teamdal.EditTeam(conn, client, params)
 
 	if error != nil {
 		return nil, error
@@ -88,7 +89,7 @@ func EditTeamOwnerHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	var params *models.Team = &models.Team{}
 
-	err := c.ShouldatabaseindJSON(params)
+	err := c.ShouldBindJSON(params)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
@@ -97,7 +98,7 @@ func EditTeamOwnerHttp(c *gin.Context) (*models.Response, *models.Error) {
 		}
 	}
 
-	var error = EditTeamOwner(conn, client, params)
+	var error = teamdal.EditTeamOwner(conn, client, params)
 
 	if error != nil {
 		return nil, error
@@ -121,7 +122,7 @@ func DeleteTeamHttp(c *gin.Context) (*models.Response, *models.Error) {
 	defer database.Disconnect(*client, conn)
 
 	var params *models.Team = &models.Team{}
-	err := c.ShouldatabaseindJSON(params)
+	err := c.ShouldBindJSON(params)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
@@ -130,7 +131,7 @@ func DeleteTeamHttp(c *gin.Context) (*models.Response, *models.Error) {
 		}
 	}
 
-	var error = DeleteTeam(conn, client, params)
+	var error = teamdal.DeleteTeam(conn, client, params)
 	if error != nil {
 		return nil, error
 	}
@@ -163,7 +164,7 @@ func GetTeamHttp(c *gin.Context) (*models.Response, *models.Error) {
 		}
 	}
 
-	team, error := GetTeam(conn, client, &params)
+	team, error := teamdal.GetTeam(conn, client, &params)
 	if error != nil {
 		return nil, error
 	}
@@ -184,9 +185,9 @@ func AddMemberHttp(c *gin.Context) (*models.Response, *models.Error) {
 	var client = database.CreateClient()
 	var conn = database.Connect(*client)
 	defer database.Disconnect(*client, conn)
-	var params *MemberChangeRequest = &MemberChangeRequest{}
+	var params *teamdal.MemberChangeRequest = &teamdal.MemberChangeRequest{}
 
-	err := c.ShouldatabaseindJSON(params)
+	err := c.ShouldBindJSON(params)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
@@ -195,7 +196,7 @@ func AddMemberHttp(c *gin.Context) (*models.Response, *models.Error) {
 		}
 	}
 
-	var addMemberErr = AddMember(conn, client, params)
+	var addMemberErr = teamdal.AddMember(conn, client, params)
 	if err != nil {
 		return nil, addMemberErr
 	}
@@ -217,8 +218,8 @@ func RemoveMemberHttp(c *gin.Context) (*models.Response, *models.Error) {
 	var conn = database.Connect(*client)
 	defer database.Disconnect(*client, conn)
 
-	var params *MemberChangeRequest = &MemberChangeRequest{}
-	err := c.ShouldatabaseindJSON(params)
+	var params *teamdal.MemberChangeRequest = &teamdal.MemberChangeRequest{}
+	err := c.ShouldBindJSON(params)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
@@ -227,7 +228,7 @@ func RemoveMemberHttp(c *gin.Context) (*models.Response, *models.Error) {
 		}
 	}
 
-	var removeMemberErr = RemoveMember(conn, client, params)
+	var removeMemberErr = teamdal.RemoveMember(conn, client, params)
 	if err != nil {
 		return nil, removeMemberErr
 	}
