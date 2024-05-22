@@ -8,6 +8,8 @@ github.com/akrck02/valhalla-api-common v0.0.4 h1:t0AEjUwN9ByE27Vj/S5VVw7ybEkT8ID
 github.com/akrck02/valhalla-api-common v0.0.4/go.mod h1:QDpaaMt42Do85fnT/iDNKzNcfCmGbPCfjRm28sYTwsM=
 github.com/akrck02/valhalla-api-common v0.0.5 h1:6JAhFOi2Z6oEiXjFmzbWJ0+4MKh52RO6Koei7/RBOKE=
 github.com/akrck02/valhalla-api-common v0.0.5/go.mod h1:QDpaaMt42Do85fnT/iDNKzNcfCmGbPCfjRm28sYTwsM=
+github.com/akrck02/valhalla-api-common v0.0.7 h1:0SqRduHvkN8ZHz6NemftnLVubeh8t9sFI4IQYAiSfUc=
+github.com/akrck02/valhalla-api-common v0.0.7/go.mod h1:5nUU1Sbh8OXZx8EGwZbtCqopPCcVvZHJf0UtApQQolY=
 github.com/akrck02/valhalla-core-dal v0.0.1 h1:ivS/tXlLru6JCgX9r7FrQOB9Xn82UEQ0JgPtXGg7QFs=
 github.com/akrck02/valhalla-core-dal v0.0.1/go.mod h1:fY3ngH3MvrzL1GzqIhx4MZMtFbB4kHm0wRe0wy39S3Y=
 github.com/akrck02/valhalla-core-dal v0.0.2 h1:aWUeaYJnzCsDYQ06VtVMm/UpMkMohkEpAZGSrdAages=
@@ -18,6 +20,8 @@ github.com/akrck02/valhalla-core-dal v0.0.4 h1:zxc2MbM1Doqw0l2PiQj6S2DUdiCR1gvzD
 github.com/akrck02/valhalla-core-dal v0.0.4/go.mod h1:RuSBn+gyP1jwm2ya5XH3p+qOwEILYwsYmlmsK0ZGoyY=
 github.com/akrck02/valhalla-core-sdk v0.0.7 h1:6poICbaI0AtcUnCj51JmhiNrE12cvDpvq7vC2ROxRSQ=
 github.com/akrck02/valhalla-core-sdk v0.0.7/go.mod h1:x3hf46f4+SfyE6SL4V1KX2Jvf5ERH/9FVrMa1EwM070=
+github.com/akrck02/valhalla-core-sdk v0.0.8 h1:yzAVzpeEyBJTGAf9uBNVLvA2JmJSttXKOU2N09X4krU=
+github.com/akrck02/valhalla-core-sdk v0.0.8/go.mod h1:x3hf46f4+SfyE6SL4V1KX2Jvf5ERH/9FVrMa1EwM070=
 github.com/bytedance/sonic v1.5.0/go.mod h1:ED5hyg4y6t3/9Ku1R6dU/4KyJ48DZ4jPhfY1O2AihPM=
 github.com/bytedance/sonic v1.9.1 h1:6iJ6NqdoxCDr6mbY8h18oSO+cShGSMRGCEo7F2h0x8s=
 github.com/bytedance/sonic v1.9.1/go.mod h1:i736AoUSYt75HyZLoJW9ERYxcy6eaN6h4BZXU064P/U=
