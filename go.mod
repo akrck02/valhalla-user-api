@@ -4,7 +4,7 @@ go 1.21.8
 
 require (
 	github.com/akrck02/valhalla-api-common v0.0.8
-	github.com/akrck02/valhalla-core-dal v0.0.4
+	github.com/akrck02/valhalla-core-dal v0.0.5
 	github.com/akrck02/valhalla-core-sdk v0.0.8
 	github.com/gin-gonic/gin v1.9.1
 )
