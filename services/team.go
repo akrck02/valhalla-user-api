@@ -197,7 +197,7 @@ func AddMemberHttp(c *gin.Context) (*models.Response, *models.Error) {
 	}
 
 	var addMemberErr = teamdal.AddMember(conn, client, params)
-	if err != nil {
+	if addMemberErr != nil {
 		return nil, addMemberErr
 	}
 
@@ -229,7 +229,7 @@ func RemoveMemberHttp(c *gin.Context) (*models.Response, *models.Error) {
 	}
 
 	var removeMemberErr = teamdal.RemoveMember(conn, client, params)
-	if err != nil {
+	if removeMemberErr != nil {
 		return nil, removeMemberErr
 	}
 
