@@ -1,0 +1,20 @@
+services:
+  valhalla:
+    container_name: valhalla-user-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      no_cache: true
+    ports:
+      - ${PORT}:${PORT}
+    restart: unless-stopped
+    networks:
+      - valhalla-dev
+
+networks:
+  valhalla-dev:
+    external: true
+    ipam:
+      driver: default
+      config:
+        - subnet: ${MASK_MONGODB}
