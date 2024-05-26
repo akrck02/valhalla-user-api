@@ -77,18 +77,12 @@ func LoginHttp(c *gin.Context) (*models.Response, *models.Error) {
 func LoginAuthHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	auth := &models.AuthLogin{}
-	err := c.ShouldBindJSON(auth)
-	if err != nil {
-		return nil, &models.Error{
-			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   valerror.INVALID_REQUEST,
-			Message: "Invalid request",
-		}
+	auth := &models.AuthLogin{
+		Email:     request.User.Email,
+		AuthToken: request.Authorization,
 	}
 
 	auth.AuthToken = request.Authorization
-
 	error := userdal.LoginAuth(auth, request.IP, request.UserAgent)
 	if error != nil {
 		return nil, error
