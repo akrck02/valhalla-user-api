@@ -2,13 +2,12 @@ package services
 
 import (
 	server "github.com/akrck02/valhalla-api-common/http"
-	"github.com/akrck02/valhalla-core-dal/database"
 	permissiondal "github.com/akrck02/valhalla-core-dal/services/permission"
 	userdal "github.com/akrck02/valhalla-core-dal/services/user"
-	"github.com/akrck02/valhalla-core-sdk/error"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
 	"github.com/akrck02/valhalla-core-sdk/models"
+	"github.com/akrck02/valhalla-core-sdk/valerror"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,21 +17,17 @@ import (
 // [param] c | *gin.Context: context
 func RegisterHttp(c *gin.Context) (*models.Response, *models.Error) {
 
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
-
 	user := &models.User{}
 	err := c.ShouldBindJSON(user)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
 
-	error := userdal.Register(conn, client, user)
+	error := userdal.Register(user)
 	if error != nil {
 		return nil, error
 	}
@@ -49,23 +44,19 @@ func RegisterHttp(c *gin.Context) (*models.Response, *models.Error) {
 func LoginHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
-
 	var user *models.User = &models.User{}
 	err := c.ShouldBindJSON(user)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
 
 	ip := request.IP
 	address := request.UserAgent
-	token, error := userdal.Login(conn, client, user, ip, address)
+	token, error := userdal.Login(user, ip, address)
 
 	if error != nil {
 		return nil, error
@@ -86,23 +77,19 @@ func LoginHttp(c *gin.Context) (*models.Response, *models.Error) {
 func LoginAuthHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
-
 	auth := &models.AuthLogin{}
 	err := c.ShouldBindJSON(auth)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
 
 	auth.AuthToken = request.Authorization
 
-	error := userdal.LoginAuth(conn, client, auth, request.IP, request.UserAgent)
+	error := userdal.LoginAuth(auth, request.IP, request.UserAgent)
 	if error != nil {
 		return nil, error
 	}
@@ -120,16 +107,12 @@ func LoginAuthHttp(c *gin.Context) (*models.Response, *models.Error) {
 func EditUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
-
 	userToEdit := &models.User{}
 	err := c.ShouldBindJSON(userToEdit)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
@@ -139,16 +122,16 @@ func EditUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 	if !canEdit {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
-			Error:   error.ACCESS_DENIED,
+			Error:   valerror.ACCESS_DENIED,
 			Message: "Cannot edit user",
 		}
 	}
 
-	updateErr := userdal.EditUser(conn, client, userToEdit)
+	updateErr := userdal.EditUser(userToEdit)
 	if updateErr != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
@@ -165,16 +148,13 @@ func EditUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 func EditUserEmailHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
 
 	email := &userdal.EmailChangeRequest{}
 	err := c.ShouldBindJSON(email)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
@@ -184,12 +164,12 @@ func EditUserEmailHttp(c *gin.Context) (*models.Response, *models.Error) {
 	if !canEdit {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
-			Error:   error.ACCESS_DENIED,
+			Error:   valerror.ACCESS_DENIED,
 			Message: "Access denied: Cannot edit user",
 		}
 	}
 
-	changeErr := userdal.EditUserEmail(conn, client, email)
+	changeErr := userdal.EditUserEmail(email)
 	if changeErr != nil {
 		return nil, changeErr
 	}
@@ -206,16 +186,13 @@ func EditUserEmailHttp(c *gin.Context) (*models.Response, *models.Error) {
 func DeleteUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
 
 	user := &models.User{}
 	err := c.ShouldBindJSON(user)
 	if err != nil {
 		return nil, &models.Error{
 			Status: http.HTTP_STATUS_BAD_REQUEST,
-			Error:  error.INVALID_REQUEST,
+			Error:  valerror.INVALID_REQUEST,
 		}
 	}
 
@@ -224,12 +201,12 @@ func DeleteUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 	if !canDelete {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
-			Error:   error.ACCESS_DENIED,
+			Error:   valerror.ACCESS_DENIED,
 			Message: "Access denied: Cannot delete user",
 		}
 	}
 
-	deleteErr := userdal.DeleteUser(conn, client, user)
+	deleteErr := userdal.DeleteUser(user)
 	if deleteErr != nil {
 		return nil, deleteErr
 	}
@@ -246,16 +223,13 @@ func DeleteUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 func GetUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
 
 	// Get code from url GET parameter
 	id := c.Query("id")
 	if id == "" {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Id cannot be empty",
 		}
 	}
@@ -269,12 +243,12 @@ func GetUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 	if !canSee {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
-			Error:   error.ACCESS_DENIED,
+			Error:   valerror.ACCESS_DENIED,
 			Message: "Access denied: Cannot see the user",
 		}
 	}
 
-	foundUser, error := userdal.GetUser(conn, client, user, true)
+	foundUser, error := userdal.GetUser(user, true)
 	if error != nil {
 		return nil, error
 	}
@@ -303,7 +277,7 @@ func EditUserProfilePictureHttp(c *gin.Context) (*models.Response, *models.Error
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request body",
 		}
 	}
@@ -313,17 +287,13 @@ func EditUserProfilePictureHttp(c *gin.Context) (*models.Response, *models.Error
 	if !canEdit {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
-			Error:   error.ACCESS_DENIED,
+			Error:   valerror.ACCESS_DENIED,
 			Message: "Access denied: Cannot edit user",
 		}
 	}
 
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
-
 	// Upload image
-	error := userdal.EditUserProfilePicture(conn, client, user, bytes)
+	error := userdal.EditUserProfilePicture(user, bytes)
 	if error != nil {
 		return nil, error
 	}
@@ -340,15 +310,11 @@ func EditUserProfilePictureHttp(c *gin.Context) (*models.Response, *models.Error
 // [param] c | *gin.Context: context
 func ValidateUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 
-	client := database.CreateClient()
-	conn := database.Connect(*client)
-	defer database.Disconnect(*client, conn)
-
 	// Get code from url GET parameter
 	code := c.Query("code")
 	log.Info("Query code: " + code)
 
-	error := userdal.ValidateUser(conn, client, code)
+	error := userdal.ValidateUser(code)
 	if error != nil {
 		return nil, error
 	}

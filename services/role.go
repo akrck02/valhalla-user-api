@@ -1,10 +1,10 @@
 package services
 
 import (
-	"github.com/akrck02/valhalla-core-dal/database"
-	"github.com/akrck02/valhalla-core-sdk/error"
+	roledal "github.com/akrck02/valhalla-core-dal/services/role"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/models"
+	"github.com/akrck02/valhalla-core-sdk/valerror"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,23 +15,19 @@ import (
 // [return] *models.Response: response | *models.Error: error
 func CreateRoleHttp(c *gin.Context) (*models.Response, *models.Error) {
 
-	var client = database.CreateClient()
-	var conn = database.Connect(*client)
-	defer database.Disconnect(*client, conn)
-
 	var params models.User
 	err := c.ShouldBindJSON(&params)
 
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_NOT_ACCEPTABLE,
-			Error:   error.INVALID_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
 
 	var role models.Role
-	var error = CreateRole(conn, client, role)
+	var error = roledal.CreateRole(role)
 
 	if error != nil {
 		return nil, error
@@ -52,7 +48,7 @@ func CreateRoleHttp(c *gin.Context) (*models.Response, *models.Error) {
 func DeleteRoleHttp(c *gin.Context) (*models.Response, *models.Error) {
 	return nil, &models.Error{
 		Status:  http.HTTP_STATUS_NOT_IMPLEMENTED,
-		Error:   error.NOT_IMPLEMENTED,
+		Error:   valerror.NOT_IMPLEMENTED,
 		Message: "Not implemented",
 	}
 }
@@ -65,7 +61,7 @@ func DeleteRoleHttp(c *gin.Context) (*models.Response, *models.Error) {
 func EditRoleHttp(c *gin.Context) (*models.Response, *models.Error) {
 	return nil, &models.Error{
 		Status:  http.HTTP_STATUS_NOT_IMPLEMENTED,
-		Error:   error.NOT_IMPLEMENTED,
+		Error:   valerror.NOT_IMPLEMENTED,
 		Message: "Not implemented",
 	}
 }
@@ -78,7 +74,7 @@ func EditRoleHttp(c *gin.Context) (*models.Response, *models.Error) {
 func GetRoleHttp(c *gin.Context) (*models.Response, *models.Error) {
 	return nil, &models.Error{
 		Status:  http.HTTP_STATUS_NOT_IMPLEMENTED,
-		Error:   error.NOT_IMPLEMENTED,
+		Error:   valerror.NOT_IMPLEMENTED,
 		Message: "Not implemented",
 	}
 }
