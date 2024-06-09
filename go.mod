@@ -6,8 +6,8 @@ toolchain go1.22.3
 
 require (
 	github.com/akrck02/valhalla-api-common v0.0.9-20240526163041-dev
-	github.com/akrck02/valhalla-core-dal v0.0.10-20240526160524-dev
-	github.com/akrck02/valhalla-core-sdk v0.0.11-20240526123155-dev
+	github.com/akrck02/valhalla-core-dal v0.0.10-20240603165439-feature-teams.0.20240603145617-d63c49ab3fc0
+	github.com/akrck02/valhalla-core-sdk v0.0.11-20240603145610-feature-teams
 	github.com/gin-gonic/gin v1.10.0
 )
 
