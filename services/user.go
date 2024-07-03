@@ -7,26 +7,16 @@ import (
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
 	"github.com/akrck02/valhalla-core-sdk/models"
+	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
+	usersmodels "github.com/akrck02/valhalla-core-sdk/models/users"
 	"github.com/akrck02/valhalla-core-sdk/valerror"
 
 	"github.com/gin-gonic/gin"
 )
 
-// Register HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func RegisterHttp(c *gin.Context) (*models.Response, *models.Error) {
+func Register(context systemmodels.ValhallaContext) (*models.Response, *models.Error) {
 
-	user := &models.User{}
-	err := c.ShouldBindJSON(user)
-	if err != nil {
-		return nil, &models.Error{
-			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   valerror.INVALID_REQUEST,
-			Message: "Invalid request",
-		}
-	}
-
+	user := context.(systemmodels.Request).user
 	error := userdal.Register(user)
 	if error != nil {
 		return nil, error
@@ -41,11 +31,11 @@ func RegisterHttp(c *gin.Context) (*models.Response, *models.Error) {
 // Login HTTP API endpoint
 //
 // [param] c | *gin.Context: context
-func LoginHttp(c *gin.Context) (*models.Response, *models.Error) {
+func LoginHttp(context systemmodels.ValhallaContext, gin *gin.Context) (*models.Response, *models.Error) {
 
-	request := server.GetRequestMetadata(c)
-	var user *models.User = &models.User{}
-	err := c.ShouldBindJSON(user)
+	request := server.GetRequestMetadata(gin)
+	var user *usersmodels.User = &usersmodels.User{}
+	err := gin.ShouldBindJSON(user)
 	if err != nil {
 		return nil, &models.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
@@ -77,7 +67,7 @@ func LoginHttp(c *gin.Context) (*models.Response, *models.Error) {
 func LoginAuthHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	auth := &models.AuthLogin{
+	auth := &usersmodels.AuthLogin{
 		Email:     request.User.Email,
 		AuthToken: request.Authorization,
 	}
@@ -101,7 +91,7 @@ func LoginAuthHttp(c *gin.Context) (*models.Response, *models.Error) {
 func EditUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	request := server.GetRequestMetadata(c)
-	userToEdit := &models.User{}
+	userToEdit := &usersmodels.User{}
 	err := c.ShouldBindJSON(userToEdit)
 	if err != nil {
 		return nil, &models.Error{

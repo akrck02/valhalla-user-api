@@ -3,9 +3,9 @@ package main
 import (
 	apicommon "github.com/akrck02/valhalla-api-common"
 	"github.com/akrck02/valhalla-api-common/configuration"
-	"github.com/akrck02/valhalla-api-common/models"
 	databaseConfig "github.com/akrck02/valhalla-core-dal/configuration"
 	"github.com/akrck02/valhalla-core-sdk/http"
+	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/akrck02/valhalla-user-api/services"
 )
 
@@ -17,10 +17,10 @@ func main() {
 
 	apicommon.Start(
 		config,
-		[]models.Endpoint{
+		[]systemmodels.Endpoint{
 
 			// User endpoints
-			{Path: "register", Method: http.HTTP_METHOD_PUT, Listener: services.RegisterHttp},
+			{Path: "register", Method: http.HTTP_METHOD_PUT, Listener: services.Register, Checks: services.RegisterCheck},
 			{Path: "login", Method: http.HTTP_METHOD_POST, Listener: services.LoginHttp},
 			{Path: "login/auth", Method: http.HTTP_METHOD_POST, Listener: services.LoginAuthHttp, Secured: true},
 			{Path: "edit", Method: http.HTTP_METHOD_POST, Listener: services.EditUserHttp, Secured: true},
@@ -31,10 +31,10 @@ func main() {
 			{Path: "validate", Method: http.HTTP_METHOD_GET, Listener: services.ValidateUserHttp, Secured: true},
 
 			// Role endpoints
-			{Path: "role/create", Method: http.HTTP_METHOD_PUT, Listener: services.CreateRoleHttp, Secured: true},
-			{Path: "role/delete", Method: http.HTTP_METHOD_DELETE, Listener: services.DeleteRoleHttp, Secured: true},
-			{Path: "role/get", Method: http.HTTP_METHOD_GET, Listener: services.GetRoleHttp, Secured: true},
-			{Path: "role/edit", Method: http.HTTP_METHOD_POST, Listener: services.EditRoleHttp, Secured: true},
+			{Path: "role/create", Method: http.HTTP_METHOD_PUT, Listener: services.CreateRole, Secured: true},
+			{Path: "role/delete", Method: http.HTTP_METHOD_DELETE, Listener: services.DeleteRole, Secured: true},
+			{Path: "role/get", Method: http.HTTP_METHOD_GET, Listener: services.GetRole, Secured: true},
+			{Path: "role/edit", Method: http.HTTP_METHOD_POST, Listener: services.EditRole, Secured: true},
 
 			// Team endpoints
 			{Path: "team/create", Method: http.HTTP_METHOD_PUT, Listener: services.CreateTeamHttp, Secured: true},
