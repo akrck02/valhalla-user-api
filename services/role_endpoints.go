@@ -5,7 +5,7 @@ import (
 	"github.com/akrck02/valhalla-core-sdk/http"
 )
 
-var CreateRoleEndpoint = &models.Endpoint{
+var CreateRoleEndpoint = models.Endpoint{
 	Path:     "role/create",
 	Method:   http.HTTP_METHOD_PUT,
 	Listener: CreateRole,
@@ -14,7 +14,7 @@ var CreateRoleEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var DeleteRoleEndpoint = &models.Endpoint{
+var DeleteRoleEndpoint = models.Endpoint{
 	Path:     "role/delete",
 	Method:   http.HTTP_METHOD_DELETE,
 	Listener: DeleteRole,
@@ -23,7 +23,7 @@ var DeleteRoleEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var GetRoleEndpoint = &models.Endpoint{
+var GetRoleEndpoint = models.Endpoint{
 	Path:     "role/get",
 	Method:   http.HTTP_METHOD_GET,
 	Listener: GetRole,
@@ -32,7 +32,7 @@ var GetRoleEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var EditRoleEndpoint = &models.Endpoint{
+var EditRoleEndpoint = models.Endpoint{
 	Path:     "role/edit",
 	Method:   http.HTTP_METHOD_POST,
 	Listener: EditRole,

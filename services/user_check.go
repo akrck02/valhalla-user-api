@@ -30,7 +30,7 @@ func LoginCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *system
 	var user *usersmodels.User = &usersmodels.User{}
 	err := gin.ShouldBindJSON(user)
 	if err != nil {
-		return nil, &systemmodels.Error{
+		return &systemmodels.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
 			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
@@ -117,7 +117,7 @@ func GetUserCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *syst
 	}
 
 	// get user from database
-	user, err := userdal.GetUser(&systemmodels.User{ID: id}, false)
+	user, err := userdal.GetUser(&usersmodels.User{ID: id}, false)
 	if err != nil {
 		return err
 	}
@@ -129,15 +129,15 @@ func GetUserCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *syst
 func EditUserProfilePictureCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *systemmodels.Error {
 
 	// Get user
-	user, err := userdal.GetUser(&systemmodels.User{ID: gin.Query("id")}, false)
+	user, err := userdal.GetUser(&usersmodels.User{ID: gin.Query("id")}, false)
 
 	if err != nil {
 		return err
 	}
 
 	// Get image as bytes
-	bytes, err := server.MultipartToBytes(gin, "ProfilePicture")
-	if err != nil {
+	bytes, merr := server.MultipartToBytes(gin, "ProfilePicture")
+	if merr != nil {
 		return &systemmodels.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
 			Error:   valerror.INVALID_REQUEST,
@@ -146,7 +146,7 @@ func EditUserProfilePictureCheck(context *systemmodels.ValhallaContext, gin *gin
 	}
 
 	context.Request.Body = user
-	context.Request.Files = []bytes
+	context.Request.Files = bytes
 	return nil
 }
 

@@ -5,7 +5,7 @@ import (
 	"github.com/akrck02/valhalla-core-sdk/http"
 )
 
-var CreateTeamEndpoint = &models.Endpoint{
+var CreateTeamEndpoint = models.Endpoint{
 	Path:     "team/create",
 	Method:   http.HTTP_METHOD_PUT,
 	Listener: CreateTeam,
@@ -14,7 +14,7 @@ var CreateTeamEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var DeleteTeamEndpoint = &models.Endpoint{
+var DeleteTeamEndpoint = models.Endpoint{
 	Path:     "team/delete",
 	Method:   http.HTTP_METHOD_DELETE,
 	Listener: DeleteTeam,
@@ -23,7 +23,7 @@ var DeleteTeamEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var GetTeamEndpoint = &models.Endpoint{
+var GetTeamEndpoint = models.Endpoint{
 	Path:     "team/get",
 	Method:   http.HTTP_METHOD_GET,
 	Listener: GetTeam,
@@ -32,7 +32,7 @@ var GetTeamEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var EditTeamEndpoint = &models.Endpoint{
+var EditTeamEndpoint = models.Endpoint{
 	Path:     "team/edit",
 	Method:   http.HTTP_METHOD_POST,
 	Listener: EditTeam,
@@ -41,7 +41,7 @@ var EditTeamEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var EditTeamOwnerEndpoint = &models.Endpoint{
+var EditTeamOwnerEndpoint = models.Endpoint{
 	Path:     "team/edit/owner",
 	Method:   http.HTTP_METHOD_PUT,
 	Listener: EditTeamOwner,
@@ -50,7 +50,7 @@ var EditTeamOwnerEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var AddMemberEndpoint = &models.Endpoint{
+var AddMemberEndpoint = models.Endpoint{
 	Path:     "team/member/add",
 	Method:   http.HTTP_METHOD_PUT,
 	Listener: AddMember,
@@ -59,7 +59,7 @@ var AddMemberEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var RemoveMemberEndpoint = &models.Endpoint{
+var RemoveMemberEndpoint = models.Endpoint{
 	Path:     "team/member/remove",
 	Method:   http.HTTP_METHOD_DELETE,
 	Listener: RemoveMember,

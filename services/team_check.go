@@ -1,6 +1,7 @@
 package services
 
 import (
+	teamdal "github.com/akrck02/valhalla-core-dal/services/team"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	teammodels "github.com/akrck02/valhalla-core-sdk/models/team"
@@ -95,7 +96,7 @@ func GetTeamCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *syst
 
 func AddMemberCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *systemmodels.Error {
 
-	memberChangeRequest := &teammodels.MemberChangeRequest{}
+	memberChangeRequest := &teamdal.MemberChangeRequest{}
 	err := gin.ShouldBindJSON(memberChangeRequest)
 	if err != nil {
 		return &systemmodels.Error{
@@ -112,7 +113,7 @@ func AddMemberCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *sy
 
 func RemoveMemberCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *systemmodels.Error {
 
-	memberChangeRequest := &teammodels.MemberChangeRequest{}
+	memberChangeRequest := &teamdal.MemberChangeRequest{}
 	err := gin.ShouldBindJSON(memberChangeRequest)
 	if err != nil {
 		return &systemmodels.Error{

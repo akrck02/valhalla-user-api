@@ -4,12 +4,12 @@ import (
 	teamdal "github.com/akrck02/valhalla-core-dal/services/team"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
-	usersmodels "github.com/akrck02/valhalla-core-sdk/models/users"
+	teammodels "github.com/akrck02/valhalla-core-sdk/models/team"
 )
 
-func CreateTeam(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
+func CreateTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	team := context.Request.Body.(*usersmodels.Team)
+	team := context.Request.Body.(*teammodels.Team)
 
 	var error = teamdal.CreateTeam(team)
 	if error != nil {
@@ -23,9 +23,9 @@ func CreateTeam(context systemmodels.ValhallaContext) (*systemmodels.Response, *
 
 }
 
-func EditTeam(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
+func EditTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	team := context.Request.Body.(*usersmodels.Team)
+	team := context.Request.Body.(*teammodels.Team)
 	error := teamdal.EditTeam(team)
 
 	if error != nil {
@@ -38,9 +38,9 @@ func EditTeam(context systemmodels.ValhallaContext) (*systemmodels.Response, *sy
 	}, nil
 }
 
-func EditTeamOwner(context systemmodels.ValhallaContext) (*usersmodels.Response, *systemmodels.Error) {
+func EditTeamOwner(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	team := context.Request.Body.(*usersmodels.Team)
+	team := context.Request.Body.(*teammodels.Team)
 	error := teamdal.EditTeamOwner(team)
 
 	if error != nil {
@@ -53,9 +53,9 @@ func EditTeamOwner(context systemmodels.ValhallaContext) (*usersmodels.Response,
 	}, nil
 }
 
-func DeleteTeam(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
+func DeleteTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	team := context.Request.Body.(*usersmodels.Team)
+	team := context.Request.Body.(*teammodels.Team)
 	var error = teamdal.DeleteTeam(team)
 	if error != nil {
 		return nil, error
@@ -67,10 +67,10 @@ func DeleteTeam(context systemmodels.ValhallaContext) (*systemmodels.Response, *
 	}, nil
 }
 
-func GetTeam(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
+func GetTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	team := context.Request.Body.(*usersmodels.Team)
-	team, error := teamdal.GetTeam(&team)
+	team := context.Request.Body.(*teammodels.Team)
+	team, error := teamdal.GetTeam(team)
 	if error != nil {
 		return nil, error
 	}
@@ -81,7 +81,7 @@ func GetTeam(context systemmodels.ValhallaContext) (*systemmodels.Response, *sys
 	}, nil
 }
 
-func AddMember(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
+func AddMember(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	memberChangeRequest := context.Request.Body.(*teamdal.MemberChangeRequest)
 	var addMemberErr = teamdal.AddMember(memberChangeRequest)
@@ -95,7 +95,7 @@ func AddMember(context systemmodels.ValhallaContext) (*systemmodels.Response, *s
 	}, nil
 }
 
-func RemoveMember(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
+func RemoveMember(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	memberChangeRequest := context.Request.Body.(*teamdal.MemberChangeRequest)
 	removeMemberErr := teamdal.RemoveMember(memberChangeRequest)

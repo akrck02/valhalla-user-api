@@ -5,7 +5,7 @@ import (
 	"github.com/akrck02/valhalla-core-sdk/http"
 )
 
-var RegisterEndpoint = &models.Endpoint{
+var RegisterEndpoint = models.Endpoint{
 	Path:     "register",
 	Method:   http.HTTP_METHOD_PUT,
 	Listener: Register,
@@ -13,7 +13,7 @@ var RegisterEndpoint = &models.Endpoint{
 	Database: true,
 }
 
-var LoginEndpoint = &models.Endpoint{
+var LoginEndpoint = models.Endpoint{
 	Path:     "login",
 	Method:   http.HTTP_METHOD_POST,
 	Listener: Login,
@@ -21,7 +21,7 @@ var LoginEndpoint = &models.Endpoint{
 	Database: true,
 }
 
-var LoginAuthEndpoint = &models.Endpoint{
+var LoginAuthEndpoint = models.Endpoint{
 	Path:     "login/auth",
 	Method:   http.HTTP_METHOD_POST,
 	Listener: LoginAuth,
@@ -30,7 +30,7 @@ var LoginAuthEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var EditUserEndpoint = &models.Endpoint{
+var EditUserEndpoint = models.Endpoint{
 	Path:     "edit",
 	Method:   http.HTTP_METHOD_POST,
 	Listener: EditUser,
@@ -39,7 +39,7 @@ var EditUserEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var EditUserPasswordEndpoint = &models.Endpoint{
+var EditUserPasswordEndpoint = models.Endpoint{
 	Path:     "edit/email",
 	Method:   http.HTTP_METHOD_POST,
 	Listener: EditUserEmail,
@@ -48,7 +48,7 @@ var EditUserPasswordEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var EditUserProfilePictureEndpoint = &models.Endpoint{
+var EditUserProfilePictureEndpoint = models.Endpoint{
 	Path:     "edit/profilepic",
 	Method:   http.HTTP_METHOD_POST,
 	Listener: EditUserProfilePicture,
@@ -57,7 +57,7 @@ var EditUserProfilePictureEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var DeleteUserEndpoint = &models.Endpoint{
+var DeleteUserEndpoint = models.Endpoint{
 	Path:     "delete",
 	Method:   http.HTTP_METHOD_DELETE,
 	Listener: DeleteUser,
@@ -66,7 +66,7 @@ var DeleteUserEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var GetUserEndpoint = &models.Endpoint{
+var GetUserEndpoint = models.Endpoint{
 	Path:     "get",
 	Method:   http.HTTP_METHOD_GET,
 	Listener: GetUser,
@@ -75,7 +75,7 @@ var GetUserEndpoint = &models.Endpoint{
 	Secured:  true,
 }
 
-var ValidateUserEndpoint = &models.Endpoint{
+var ValidateUserEndpoint = models.Endpoint{
 	Path:     "validate",
 	Method:   http.HTTP_METHOD_GET,
 	Listener: ValidateUser,

@@ -3,8 +3,8 @@ package main
 import (
 	apicommon "github.com/akrck02/valhalla-api-common"
 	"github.com/akrck02/valhalla-api-common/configuration"
+	"github.com/akrck02/valhalla-api-common/models"
 	databaseConfig "github.com/akrck02/valhalla-core-dal/configuration"
-	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/akrck02/valhalla-user-api/services"
 )
 
@@ -16,7 +16,7 @@ func main() {
 
 	apicommon.Start(
 		config,
-		[]systemmodels.Endpoint{
+		[]models.Endpoint{
 
 			// User endpoints
 			services.RegisterEndpoint,
