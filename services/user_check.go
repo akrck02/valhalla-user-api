@@ -1,7 +1,7 @@
 package services
 
 import (
-	server "github.com/akrck02/valhalla-api-common/http"
+	"github.com/akrck02/valhalla-api-common/server"
 	userdal "github.com/akrck02/valhalla-core-dal/services/user"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
@@ -22,6 +22,7 @@ func RegisterCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *sys
 		}
 	}
 
+	context.Request.Body = user
 	return nil
 }
 

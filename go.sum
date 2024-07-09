@@ -1,5 +1,5 @@
-github.com/akrck02/valhalla-api-common v0.0.9-20240709165717-dev h1:cMiNfTXHXunIqcLNQs7GF/wDzNHRCzR/wA/jEFNZ56g=
-github.com/akrck02/valhalla-api-common v0.0.9-20240709165717-dev/go.mod h1:X2c8C8d1a3k4XCQoMoLDNwaLBMFx52vsY6n2rzCkjjE=
+github.com/akrck02/valhalla-api-common v0.0.9-20240710001655-dev h1:apDevYuNmoQTSGhJz3EOiwSfAHg2uWoo0R9NTjlrZ20=
+github.com/akrck02/valhalla-api-common v0.0.9-20240710001655-dev/go.mod h1:X2c8C8d1a3k4XCQoMoLDNwaLBMFx52vsY6n2rzCkjjE=
 github.com/akrck02/valhalla-core-dal v0.0.10-20240703163131-feature-teams h1:yebj9wIfJAW9FiG9bSWSRhl2tqtUYFeV4jvqIolUSk0=
 github.com/akrck02/valhalla-core-dal v0.0.10-20240703163131-feature-teams/go.mod h1:OpvSSxXInnPtfH4YIIo/hkR9Faz7ONMcllUteZm959I=
 github.com/akrck02/valhalla-core-sdk v0.0.11-20240709165329-feature-teams h1:+I7Q10+UWFnFjtALtKG19RcBmTMpUIf2Uan6OwUd3bM=
