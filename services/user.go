@@ -1,100 +1,68 @@
 package services
 
 import (
-	server "github.com/akrck02/valhalla-api-common/http"
 	permissiondal "github.com/akrck02/valhalla-core-dal/services/permission"
 	userdal "github.com/akrck02/valhalla-core-dal/services/user"
 	"github.com/akrck02/valhalla-core-sdk/http"
-	"github.com/akrck02/valhalla-core-sdk/log"
-	"github.com/akrck02/valhalla-core-sdk/models"
+	devicemodels "github.com/akrck02/valhalla-core-sdk/models/device"
 	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	usersmodels "github.com/akrck02/valhalla-core-sdk/models/users"
 	"github.com/akrck02/valhalla-core-sdk/valerror"
-
-	"github.com/gin-gonic/gin"
 )
 
-func Register(context systemmodels.ValhallaContext) (*models.Response, *models.Error) {
+func Register(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	user := context.(systemmodels.Request).user
+	user := context.Request.Body.(*usersmodels.User)
 	error := userdal.Register(user)
 	if error != nil {
 		return nil, error
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code:     http.HTTP_STATUS_OK,
-		Response: gin.H{"message": "User created"},
+		Response: systemmodels.Message{Message: "User created"},
 	}, nil
 }
 
-// Login HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func LoginHttp(context systemmodels.ValhallaContext, gin *gin.Context) (*models.Response, *models.Error) {
+func Login(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	request := server.GetRequestMetadata(gin)
-	var user *usersmodels.User = &usersmodels.User{}
-	err := gin.ShouldBindJSON(user)
-	if err != nil {
-		return nil, &models.Error{
-			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   valerror.INVALID_REQUEST,
-			Message: "Invalid request",
-		}
-	}
-
-	ip := request.IP
-	address := request.UserAgent
-	token, error := userdal.Login(user, ip, address)
+	user := context.Request.Body.(*usersmodels.User)
+	token, error := userdal.Login(user, context.Request.IP, context.Request.UserAgent)
 
 	if error != nil {
 		return nil, error
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code: http.HTTP_STATUS_OK,
-		Response: gin.H{
-			"auth":  token,
-			"email": user.Email,
+		Response: devicemodels.Device{
+			User:  token,
+			Token: user.Email,
 		},
 	}, nil
 }
 
-// Login auth HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func LoginAuthHttp(c *gin.Context) (*models.Response, *models.Error) {
+func LoginAuth(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	request := server.GetRequestMetadata(c)
-	auth := &usersmodels.AuthLogin{
-		Email:     request.User.Email,
-		AuthToken: request.Authorization,
-	}
+	auth := context.Request.Body.(*usersmodels.AuthLogin)
 
-	auth.AuthToken = request.Authorization
-	error := userdal.LoginAuth(auth, request.IP, request.UserAgent)
+	error := userdal.LoginAuth(auth, context.Request.IP, context.Request.UserAgent)
 	if error != nil {
 		return nil, error
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code:     http.HTTP_STATUS_OK,
-		Response: gin.H{"message": "User logged in"},
+		Response: systemmodels.Message{Message: "User logged in"},
 	}, nil
 
 }
 
-// Edit user HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func EditUserHttp(c *gin.Context) (*models.Response, *models.Error) {
+func EditUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	request := server.GetRequestMetadata(c)
-	userToEdit := &usersmodels.User{}
-	err := c.ShouldBindJSON(userToEdit)
-	if err != nil {
-		return nil, &models.Error{
+	// check if request is made by humans ;)
+	if context.Launcher.LauncherType != systemmodels.USER {
+		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
 			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
@@ -102,9 +70,10 @@ func EditUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 	}
 
 	// get if request user can edit the user
-	canEdit := permissiondal.CanEditUser(request.User, userToEdit)
+	userToEdit := context.Request.Body.(*usersmodels.User)
+	canEdit := permissiondal.CanEditUser(context.Request.User, userToEdit)
 	if !canEdit {
-		return nil, &models.Error{
+		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
 			Error:   valerror.ACCESS_DENIED,
 			Message: "Cannot edit user",
@@ -113,119 +82,107 @@ func EditUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 
 	updateErr := userdal.EditUser(userToEdit)
 	if updateErr != nil {
-		return nil, &models.Error{
+		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
 			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code:     http.HTTP_STATUS_OK,
-		Response: gin.H{"message": "User updated"},
+		Response: systemmodels.Message{Message: "User updated"},
 	}, nil
 }
 
-// Change email HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func EditUserEmailHttp(c *gin.Context) (*models.Response, *models.Error) {
+func EditUserEmail(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	request := server.GetRequestMetadata(c)
-
-	email := &userdal.EmailChangeRequest{}
-	err := c.ShouldBindJSON(email)
-	if err != nil {
-		return nil, &models.Error{
+	// check if request is made by humans ;)
+	if context.Launcher.LauncherType != systemmodels.USER {
+		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
 			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
 		}
 	}
 
+	emailChangeRequest := context.Request.Body.(*userdal.EmailChangeRequest)
+
 	// get if request user can edit the user
-	canEdit := permissiondal.CanEditUser(request.User, &models.User{Email: email.Email})
+	canEdit := permissiondal.CanEditUser(context.Request.User, &usersmodels.User{Email: emailChangeRequest.Email})
 	if !canEdit {
-		return nil, &models.Error{
+		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
 			Error:   valerror.ACCESS_DENIED,
 			Message: "Access denied: Cannot edit user",
 		}
 	}
 
-	changeErr := userdal.EditUserEmail(email)
+	changeErr := userdal.EditUserEmail(emailChangeRequest)
 	if changeErr != nil {
 		return nil, changeErr
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code:     http.HTTP_STATUS_OK,
-		Response: gin.H{"message": "Email changed"},
+		Response: systemmodels.Message{Message: "Email updated"},
 	}, nil
 }
 
-// Delete user HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func DeleteUserHttp(c *gin.Context) (*models.Response, *models.Error) {
+func DeleteUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	request := server.GetRequestMetadata(c)
-
-	user := &models.User{}
-	err := c.ShouldBindJSON(user)
-	if err != nil {
-		return nil, &models.Error{
-			Status: http.HTTP_STATUS_BAD_REQUEST,
-			Error:  valerror.INVALID_REQUEST,
+	// check if request is made by humans ;)
+	if context.Launcher.LauncherType != systemmodels.USER {
+		return nil, &systemmodels.Error{
+			Status:  http.HTTP_STATUS_BAD_REQUEST,
+			Error:   valerror.INVALID_REQUEST,
+			Message: "Invalid request",
 		}
 	}
 
 	// get if request user can delete the user
-	canDelete := permissiondal.CanEditUser(request.User, user)
+	user := context.Request.Body.(*usersmodels.User)
+	requestingUser, err := userdal.GetUser(&usersmodels.User{ID: context.Launcher.Id}, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	canDelete := permissiondal.CanEditUser(requestingUser, user)
 	if !canDelete {
-		return nil, &models.Error{
+		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
 			Error:   valerror.ACCESS_DENIED,
 			Message: "Access denied: Cannot delete user",
 		}
 	}
 
+	// delete the user
 	deleteErr := userdal.DeleteUser(user)
 	if deleteErr != nil {
 		return nil, deleteErr
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code:     http.HTTP_STATUS_OK,
-		Response: gin.H{"message": "User deleted"},
+		Response: systemmodels.Message{Message: "User deleted"},
 	}, nil
 }
 
-// Get user HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func GetUserHttp(c *gin.Context) (*models.Response, *models.Error) {
+func GetUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	request := server.GetRequestMetadata(c)
+	requestingUser, err := userdal.GetUser(&usersmodels.User{ID: context.Launcher.Id}, false)
 
-	// Get code from url GET parameter
-	id := c.Query("id")
-	if id == "" {
-		return nil, &models.Error{
-			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   valerror.INVALID_REQUEST,
-			Message: "Id cannot be empty",
-		}
+	if err != nil {
+		return nil, err
 	}
 
-	var user *models.User = &models.User{
-		Email: id,
-	}
+	user := context.Request.Body.(*usersmodels.User)
 
 	// get if request user can see the user
-	canSee := permissiondal.CanSeeUser(request.User, user)
+	canSee := permissiondal.CanSeeUser(requestingUser, user)
 	if !canSee {
-		return nil, &models.Error{
+		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
 			Error:   valerror.ACCESS_DENIED,
 			Message: "Access denied: Cannot see the user",
@@ -237,39 +194,28 @@ func GetUserHttp(c *gin.Context) (*models.Response, *models.Error) {
 		return nil, error
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code:     http.HTTP_STATUS_OK,
-		Response: gin.H{"message": "User found", "user": foundUser},
+		Response: foundUser,
 	}, nil
 
 }
 
-// Edit user profile picture HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func EditUserProfilePictureHttp(c *gin.Context) (*models.Response, *models.Error) {
+func EditUserProfilePicture(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	request := server.GetRequestMetadata(c)
-
-	// Get user
-	user := &models.User{
-		Email: c.Query("email"),
-	}
-
-	// Get image as bytes
-	bytes, err := server.MultipartToBytes(c, "ProfilePicture")
-	if err != nil {
-		return nil, &models.Error{
-			Status:  http.HTTP_STATUS_BAD_REQUEST,
-			Error:   valerror.INVALID_REQUEST,
-			Message: "Invalid request body",
-		}
-	}
+	user := context.Request.Body.(*usersmodels.User)
+	bytes := context.Request.Body.([]byte)
 
 	// get if request user can delete the user
-	canEdit := permissiondal.CanEditUser(request.User, user)
+	requestingUser, err := userdal.GetUser(&usersmodels.User{ID: context.Launcher.Id}, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	canEdit := permissiondal.CanEditUser(requestingUser, user)
 	if !canEdit {
-		return nil, &models.Error{
+		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_FORBIDDEN,
 			Error:   valerror.ACCESS_DENIED,
 			Message: "Access denied: Cannot edit user",
@@ -282,29 +228,24 @@ func EditUserProfilePictureHttp(c *gin.Context) (*models.Response, *models.Error
 		return nil, error
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code:     http.HTTP_STATUS_OK,
-		Response: gin.H{"message": "Profile picture updated"},
+		Response: systemmodels.Message{Message: "Profile picture updated"},
 	}, nil
 
 }
 
-// Validate user account HTTP API endpoint
-//
-// [param] c | *gin.Context: context
-func ValidateUserHttp(c *gin.Context) (*models.Response, *models.Error) {
+func ValidateUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	// Get code from url GET parameter
-	code := c.Query("code")
-	log.Info("Query code: " + code)
-
+	code := context.Request.Body.(string)
 	error := userdal.ValidateUser(code)
 	if error != nil {
 		return nil, error
 	}
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code:     http.HTTP_STATUS_OK,
-		Response: gin.H{"message": "User validated"},
+		Response: systemmodels.Message{Message: "User validated"},
 	}, nil
 }
