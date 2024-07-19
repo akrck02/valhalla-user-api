@@ -3,15 +3,14 @@ package services
 import (
 	roledal "github.com/akrck02/valhalla-core-dal/services/role"
 	"github.com/akrck02/valhalla-core-sdk/http"
+	rolemodels "github.com/akrck02/valhalla-core-sdk/models/role"
 	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
-	usersmodels "github.com/akrck02/valhalla-core-sdk/models/users"
 	"github.com/akrck02/valhalla-core-sdk/valerror"
-	"github.com/gin-gonic/gin"
 )
 
 func CreateRole(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	var role usersmodels.Role
+	var role rolemodels.Role
 	var error = roledal.CreateRole(role)
 
 	if error != nil {
@@ -25,15 +24,7 @@ func CreateRole(context *systemmodels.ValhallaContext) (*systemmodels.Response, 
 
 }
 
-func DeleteRole(c *gin.Context) (*systemmodels.Response, *systemmodels.Error) {
-	return nil, &usersmodels.Error{
-		Status:  http.HTTP_STATUS_NOT_IMPLEMENTED,
-		Error:   valerror.NOT_IMPLEMENTED,
-		Message: "Not implemented",
-	}
-}
-
-func EditRole(c *gin.Context) (*systemmodels.Response, *systemmodels.Error) {
+func DeleteRole(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 	return nil, &systemmodels.Error{
 		Status:  http.HTTP_STATUS_NOT_IMPLEMENTED,
 		Error:   valerror.NOT_IMPLEMENTED,
@@ -41,7 +32,15 @@ func EditRole(c *gin.Context) (*systemmodels.Response, *systemmodels.Error) {
 	}
 }
 
-func GetRole(c *gin.Context) (*systemmodels.Response, *systemmodels.Error) {
+func EditRole(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
+	return nil, &systemmodels.Error{
+		Status:  http.HTTP_STATUS_NOT_IMPLEMENTED,
+		Error:   valerror.NOT_IMPLEMENTED,
+		Message: "Not implemented",
+	}
+}
+
+func GetRole(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 	return nil, &systemmodels.Error{
 		Status:  http.HTTP_STATUS_NOT_IMPLEMENTED,
 		Error:   valerror.NOT_IMPLEMENTED,

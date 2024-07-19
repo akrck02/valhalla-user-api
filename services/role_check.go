@@ -14,7 +14,7 @@ func CreateRoleCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *s
 	err := gin.ShouldBindJSON(&params)
 
 	if err != nil {
-		return nil, &usersmodels.Error{
+		return &systemmodels.Error{
 			Status:  http.HTTP_STATUS_NOT_ACCEPTABLE,
 			Error:   valerror.INVALID_REQUEST,
 			Message: "Invalid request",
