@@ -118,7 +118,7 @@ func GetUserCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *syst
 	}
 
 	// get user from database
-	user, err := userdal.GetUser(&usersmodels.User{ID: id}, false)
+	user, err := userdal.GetUser(context.Database.Client, &usersmodels.User{ID: id}, false)
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func GetUserCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *syst
 func EditUserProfilePictureCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *systemmodels.Error {
 
 	// Get user
-	user, err := userdal.GetUser(&usersmodels.User{ID: gin.Query("id")}, false)
+	user, err := userdal.GetUser(context.Database.Client, &usersmodels.User{ID: gin.Query("id")}, false)
 
 	if err != nil {
 		return err

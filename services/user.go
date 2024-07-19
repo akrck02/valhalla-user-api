@@ -13,7 +13,7 @@ import (
 func Register(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	user := context.Request.Body.(*usersmodels.User)
-	error := userdal.Register(user)
+	error := userdal.Register(context.Database.Client, user)
 	if error != nil {
 		return nil, error
 	}
@@ -27,7 +27,7 @@ func Register(context *systemmodels.ValhallaContext) (*systemmodels.Response, *s
 func Login(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	user := context.Request.Body.(*usersmodels.User)
-	token, error := userdal.Login(user, context.Request.IP, context.Request.UserAgent)
+	token, error := userdal.Login(context.Database.Client, user, context.Request.IP, context.Request.UserAgent)
 
 	if error != nil {
 		return nil, error
@@ -36,8 +36,10 @@ func Login(context *systemmodels.ValhallaContext) (*systemmodels.Response, *syst
 	return &systemmodels.Response{
 		Code: http.HTTP_STATUS_OK,
 		Response: devicemodels.Device{
-			User:  token,
-			Token: user.Email,
+			User:      user.Email,
+			Token:     token,
+			Address:   context.Request.IP,
+			UserAgent: context.Request.UserAgent,
 		},
 	}, nil
 }
@@ -46,7 +48,7 @@ func LoginAuth(context *systemmodels.ValhallaContext) (*systemmodels.Response, *
 
 	auth := context.Request.Body.(*usersmodels.AuthLogin)
 
-	error := userdal.LoginAuth(auth, context.Request.IP, context.Request.UserAgent)
+	error := userdal.LoginAuth(context.Database.Client, auth, context.Request.IP, context.Request.UserAgent)
 	if error != nil {
 		return nil, error
 	}
@@ -80,7 +82,7 @@ func EditUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, *s
 		}
 	}
 
-	updateErr := userdal.EditUser(userToEdit)
+	updateErr := userdal.EditUser(context.Database.Client, userToEdit)
 	if updateErr != nil {
 		return nil, &systemmodels.Error{
 			Status:  http.HTTP_STATUS_BAD_REQUEST,
@@ -118,7 +120,7 @@ func EditUserEmail(context *systemmodels.ValhallaContext) (*systemmodels.Respons
 		}
 	}
 
-	changeErr := userdal.EditUserEmail(emailChangeRequest)
+	changeErr := userdal.EditUserEmail(context.Database.Client, emailChangeRequest)
 	if changeErr != nil {
 		return nil, changeErr
 	}
@@ -142,7 +144,7 @@ func DeleteUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, 
 
 	// get if request user can delete the user
 	user := context.Request.Body.(*usersmodels.User)
-	requestingUser, err := userdal.GetUser(&usersmodels.User{ID: context.Launcher.Id}, false)
+	requestingUser, err := userdal.GetUser(context.Database.Client, &usersmodels.User{ID: context.Launcher.Id}, false)
 
 	if err != nil {
 		return nil, err
@@ -158,7 +160,7 @@ func DeleteUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, 
 	}
 
 	// delete the user
-	deleteErr := userdal.DeleteUser(user)
+	deleteErr := userdal.DeleteUser(context.Database.Client, user)
 	if deleteErr != nil {
 		return nil, deleteErr
 	}
@@ -171,7 +173,7 @@ func DeleteUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, 
 
 func GetUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
-	requestingUser, err := userdal.GetUser(&usersmodels.User{ID: context.Launcher.Id}, false)
+	requestingUser, err := userdal.GetUser(context.Database.Client, &usersmodels.User{ID: context.Launcher.Id}, false)
 
 	if err != nil {
 		return nil, err
@@ -189,7 +191,7 @@ func GetUser(context *systemmodels.ValhallaContext) (*systemmodels.Response, *sy
 		}
 	}
 
-	foundUser, error := userdal.GetUser(user, true)
+	foundUser, error := userdal.GetUser(context.Database.Client, user, true)
 	if error != nil {
 		return nil, error
 	}
@@ -207,7 +209,7 @@ func EditUserProfilePicture(context *systemmodels.ValhallaContext) (*systemmodel
 	bytes := context.Request.Body.([]byte)
 
 	// get if request user can delete the user
-	requestingUser, err := userdal.GetUser(&usersmodels.User{ID: context.Launcher.Id}, false)
+	requestingUser, err := userdal.GetUser(context.Database.Client, &usersmodels.User{ID: context.Launcher.Id}, false)
 
 	if err != nil {
 		return nil, err
@@ -223,7 +225,7 @@ func EditUserProfilePicture(context *systemmodels.ValhallaContext) (*systemmodel
 	}
 
 	// Upload image
-	error := userdal.EditUserProfilePicture(user, bytes)
+	error := userdal.EditUserProfilePicture(context.Database.Client, user, bytes)
 	if error != nil {
 		return nil, error
 	}
@@ -239,7 +241,7 @@ func ValidateUser(context *systemmodels.ValhallaContext) (*systemmodels.Response
 
 	// Get code from url GET parameter
 	code := context.Request.Body.(string)
-	error := userdal.ValidateUser(code)
+	error := userdal.ValidateUser(context.Database.Client, code)
 	if error != nil {
 		return nil, error
 	}

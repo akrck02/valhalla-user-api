@@ -11,7 +11,7 @@ func CreateTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, 
 
 	team := context.Request.Body.(*teammodels.Team)
 
-	var error = teamdal.CreateTeam(team)
+	var error = teamdal.CreateTeam(context.Database.Client, team)
 	if error != nil {
 		return nil, error
 	}
@@ -26,7 +26,7 @@ func CreateTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, 
 func EditTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	team := context.Request.Body.(*teammodels.Team)
-	error := teamdal.EditTeam(team)
+	error := teamdal.EditTeam(context.Database.Client, team)
 
 	if error != nil {
 		return nil, error
@@ -41,7 +41,7 @@ func EditTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *s
 func EditTeamOwner(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	team := context.Request.Body.(*teammodels.Team)
-	error := teamdal.EditTeamOwner(team)
+	error := teamdal.EditTeamOwner(context.Database.Client, team)
 
 	if error != nil {
 		return nil, error
@@ -56,7 +56,7 @@ func EditTeamOwner(context *systemmodels.ValhallaContext) (*systemmodels.Respons
 func DeleteTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	team := context.Request.Body.(*teammodels.Team)
-	var error = teamdal.DeleteTeam(team)
+	var error = teamdal.DeleteTeam(context.Database.Client, team)
 	if error != nil {
 		return nil, error
 	}
@@ -70,7 +70,7 @@ func DeleteTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, 
 func GetTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	team := context.Request.Body.(*teammodels.Team)
-	team, error := teamdal.GetTeam(team)
+	team, error := teamdal.GetTeam(context.Database.Client, team)
 	if error != nil {
 		return nil, error
 	}
@@ -84,7 +84,7 @@ func GetTeam(context *systemmodels.ValhallaContext) (*systemmodels.Response, *sy
 func AddMember(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	memberChangeRequest := context.Request.Body.(*teamdal.MemberChangeRequest)
-	var addMemberErr = teamdal.AddMember(memberChangeRequest)
+	var addMemberErr = teamdal.AddMember(context.Database.Client, memberChangeRequest)
 	if addMemberErr != nil {
 		return nil, addMemberErr
 	}
@@ -98,7 +98,7 @@ func AddMember(context *systemmodels.ValhallaContext) (*systemmodels.Response, *
 func RemoveMember(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	memberChangeRequest := context.Request.Body.(*teamdal.MemberChangeRequest)
-	removeMemberErr := teamdal.RemoveMember(memberChangeRequest)
+	removeMemberErr := teamdal.RemoveMember(context.Database.Client, memberChangeRequest)
 	if removeMemberErr != nil {
 		return nil, removeMemberErr
 	}
