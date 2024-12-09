@@ -1,0 +1,25 @@
+meta {
+  name: Register
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://{{valhalla.api.host}}:{{valhalla.api.user.port}}/{{valhalla.api.user}}/register
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{valhalla.user.token}}
+}
+
+body:json {
+  {
+    "username": "valencia",
+    "email": "valencia@valencia.org",
+    "password": "#ValenciaEsMuyMuyMuyPuta69",
+    "validated": false,
+    "validationCode": "087097"
+  }
+}
