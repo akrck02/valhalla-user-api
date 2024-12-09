@@ -1,0 +1,7 @@
+ktor:
+  application:
+    modules:
+      - org.valhalla.user.api.ApplicationKt.module
+  deployment:
+    port: 2001
+  development: true
