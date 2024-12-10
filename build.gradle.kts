@@ -46,7 +46,7 @@ val selfHostedRepository = repositories.maven {
 repositories {
     mavenCentral()
     selfHostedRepository
-    mavenLocal()
+    // mavenLocal()
 }
 
 // Compilation section
