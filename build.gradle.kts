@@ -1,12 +1,31 @@
+import java.io.FileInputStream
+import java.util.*
+
+// Variables section
+val localProperties: Properties = Properties().apply {
+    load(FileInputStream(File(rootProject.rootDir, "local.properties")))
+}
+
+group = providers.gradleProperty("organization").getOrElse("")
+version = providers.gradleProperty("valhalla.api.user.version").getOrElse("")
+
+val ktorVersion: String = providers.gradleProperty("kot.version").getOrElse("")
+val jdkVersion: Int = providers.gradleProperty("jdk.version").getOrElse("").toInt()
+val mavenServerName: String = localProperties.getProperty("maven.server.name")
+val mavenServerUrl: String = localProperties.getProperty("maven.server.url")
+val mavenServerUser: String = localProperties.getProperty("maven.server.user")
+val mavenServerPassword: String = localProperties.getProperty("maven.server.password")
+val valhallaSdkVersion: String = providers.gradleProperty("valhalla.core.sdk.version").getOrElse("")
+val valhallaDalVersion: String = providers.gradleProperty("valhalla.core.dal.version").getOrElse("")
+
+// Plugins section
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
 }
 
-group = "org.akrck02"
-version = "0.0.1"
-
+// Ktor Application section
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 
@@ -14,13 +33,25 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+// Repositories
+val selfHostedRepository = repositories.maven {
+    name = mavenServerName
+    url = uri(mavenServerUrl)
+    credentials {
+        username = mavenServerUser
+        password = mavenServerPassword
+    }
+    isAllowInsecureProtocol = true
+}
 repositories {
     mavenCentral()
+    selfHostedRepository
     mavenLocal()
 }
 
+// Compilation section
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(jdkVersion)
 }
 
 java {
@@ -28,10 +59,7 @@ java {
     withJavadocJar()
 }
 
-val ktorVersion: String by project
-val valhallaSdkVersion: String by project
-val valhallaDalVersion: String by project
-
+// Publishing section
 dependencies {
 
     // Ktor dependencies
